@@ -1,136 +1,103 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import data from './questions.json';
+import correct from './sound/correct.mp3';
+import wrong from './sound/wrong.mp3';
 
-const App = () => {
-  const [transaction, setTransaction] = useState("");
-  const [amount, setAmount] = useState(0);
-  const [value, setValue] = useState("");
-  const [username, setUsername] = useState("");
-  const [usermail, setUsermail] = useState("");
-  const [userid, setUserId] = useState("");
-  const [info, setInfo] = useState(null);
-  const [readyForTransaction, setReadyForTransaction] = useState(false);
+function App() {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [selectOption, setSelectOption] = useState(null);
+  const [showScore, setShowScore] = useState(false);
+  const [timer, setTimer] = useState(10);
 
-  function bank(e) {
-    e.preventDefault();
-    if (!transaction) {
-      alert("Select Transaction");
-    } else if (transaction === "Deposit") {
-      setAmount(amount + Number(value));
-    } else if (transaction === "Withdraw") {
-      const temp = amount - Number(value);
-      if (temp < 0) {
-        alert("Insufficient Balance");
+  useEffect(() => {
+    let interval;
+    if (timer > 0 && !showScore && !selectOption) {
+      interval = setInterval(() => {
+        setTimer((prevTime) => prevTime - 1);
+      }, 1000);
+    } else if (timer === 0 && !selectOption) {
+      if (currentQuestion < data.length - 1) {
+        setCurrentQuestion((prevQuestion) => prevQuestion + 1);
+        setTimer(10);
+        setSelectOption(null);
       } else {
-        setAmount(temp);
+        setShowScore(true);
       }
+    }
+
+    return () => clearInterval(interval);
+  }, [timer, showScore, currentQuestion, selectOption]);
+
+  const handleClick = (option) => {
+    setSelectOption(option);
+    setTimer(0);
+
+    if (option === data[currentQuestion].correctOption) {
+      setScore((prev) => prev + 1);
+      const audio = new Audio(correct);
+      audio.play();
     } else {
-      alert("Invalid Transaction");
+      const audio = new Audio(wrong);
+      audio.play();
     }
-    setValue("");
-  }
 
-  function createAccount(e) {
-    e.preventDefault();
-    if (!username || !usermail || !userid) {
-      alert("Please fill all account details");
-      return;
-    }
-    const accountInfo = { username, usermail, userid };
-    setInfo(accountInfo);
-    setReadyForTransaction(true);
-    // alert(Account created for" ${username});
-    setUsername("");
-    setUsermail("");
-    setUserId("");
-  }
+    setTimeout(() => {
+      if (currentQuestion < data.length - 1) {
+        setCurrentQuestion((prev) => prev + 1);
+        setSelectOption(null);
+        setTimer(10);
+      } else {
+        setShowScore(true);
+      }
+    }, 1000);
+  };
 
-  function deleteAccount() {
-    setInfo(null);
-    setReadyForTransaction(false);
-    setAmount(0);
-    alert("Account Deleted Successfully");
-  }
+  const restartQuiz = () => {
+    setSelectOption(null);
+    setScore(0);
+    setShowScore(false);
+    setTimer(10);
+    setCurrentQuestion(0);
+  };
 
   return (
-    <div>
-      <h2>Bank Application</h2>
-
-      <form onSubmit={createAccount} className="form-container">
-        <h3>Create Account</h3>
-        <label>User Name:</label>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Enter User Name"
-        />
-        <br />
-        <label>User Mail:</label>
-        <input
-          type="email"
-          value={usermail}
-          onChange={(e) => setUsermail(e.target.value)}
-          placeholder="Enter User Mail"
-        />
-        <br />
-        <label>User ID:</label>
-        <input
-          type="text"
-          value={userid}
-          onChange={(e) => setUserId(e.target.value)}
-          placeholder="Enter User ID"
-        />
-        <br />
-        <button type="submit">Create Account</button>
-      </form>
-
-      {info && (
-        <div className="form-container">
-          <h3>Account Details</h3>
-          <ul>
-            <li>
-              <strong>Name:</strong> {info.username}
-            </li>
-            <li>
-              <strong>Email:</strong> {info.usermail}
-            </li>
-            <li>
-              <strong>ID:</strong> {info.userid}
-            </li>
-          </ul>
-          <button onClick={deleteAccount}>Delete Account</button>
+    <div className="quiz-app">
+      {showScore ? (
+        <div className="score-section">
+          <h2>Quiz Complete!</h2>
+          <p>Your Score: {score}/{data.length}</p>
+          <button onClick={restartQuiz}>Restart Quiz</button>
         </div>
-      )}
-
-      {readyForTransaction && (
-        <div className="transaction-form">
-          <h3>Need To Make a Transaction?</h3>
-          <form onSubmit={bank}>
-            <label>Choose Your Transaction</label>
-            <select
-              value={transaction}
-              onChange={(e) => setTransaction(e.target.value)}
-            >
-              <option value="">-- Select --</option>
-              <option value="Deposit">Deposit</option>
-              <option value="Withdraw">Withdraw</option>
-            </select>
-            <h2>Your Bank Balance is Rs.{amount}</h2>
-            <h3>Enter The Amount</h3>
-            <input
-              type="number"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder="Enter amount"
-            />
-            <br />
-            <button type="submit">Submit</button>
-          </form>
+      ) : (
+        <div className="question-section">
+          <h2>Question {currentQuestion + 1}/{data.length}</h2>
+          <p>{data[currentQuestion].question}</p>
+          <div className="options">
+            {data[currentQuestion].options.map((option, index) => (
+              <button
+                key={index}
+                onClick={() => handleClick(option)}
+                style={{
+                  backgroundColor:
+                    selectOption === option
+                      ? option === data[currentQuestion].correctOption
+                        ? '#4caf50'
+                        : '#f44336'
+                      : '',
+                }}
+                disabled={!!selectOption}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+          <div className="timer">Time Left: <span>{timer}</span>s</div>
         </div>
       )}
     </div>
   );
-};
+}
 
 export default App;
