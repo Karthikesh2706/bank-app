@@ -1,15 +1,18 @@
 {
   "files": {
-    "main.css": "/bank-app/static/css/main.92e5c6eb.css",
-    "main.js": "/bank-app/static/js/main.1958c979.js",
-    "static/js/488.9c92ff38.chunk.js": "/bank-app/static/js/488.9c92ff38.chunk.js",
-    "index.html": "/bank-app/index.html",
-    "main.92e5c6eb.css.map": "/bank-app/static/css/main.92e5c6eb.css.map",
-    "main.1958c979.js.map": "/bank-app/static/js/main.1958c979.js.map",
-    "488.9c92ff38.chunk.js.map": "/bank-app/static/js/488.9c92ff38.chunk.js.map"
+    "main.css": "/QUIZ-APP/static/css/main.6e0941e0.css",
+    "main.js": "/QUIZ-APP/static/js/main.c8359063.js",
+    "static/js/488.9c92ff38.chunk.js": "/QUIZ-APP/static/js/488.9c92ff38.chunk.js",
+    "static/media/bg.jpg": "/QUIZ-APP/static/media/bg.c137ccd722d64133b4df.jpg",
+    "static/media/correct.mp3": "/QUIZ-APP/static/media/correct.160572d72c858155072e.mp3",
+    "static/media/wrong.mp3": "/QUIZ-APP/static/media/wrong.e946821894ae9b0a0d6f.mp3",
+    "index.html": "/QUIZ-APP/index.html",
+    "main.6e0941e0.css.map": "/QUIZ-APP/static/css/main.6e0941e0.css.map",
+    "main.c8359063.js.map": "/QUIZ-APP/static/js/main.c8359063.js.map",
+    "488.9c92ff38.chunk.js.map": "/QUIZ-APP/static/js/488.9c92ff38.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.92e5c6eb.css",
-    "static/js/main.1958c979.js"
+    "static/css/main.6e0941e0.css",
+    "static/js/main.c8359063.js"
   ]
 }
